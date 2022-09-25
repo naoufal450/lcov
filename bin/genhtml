@@ -7076,7 +7076,27 @@ sub write_file_table_entry(*$$@)
   my $anchor = 'NAME';
   if (! $is_secondary &&
       defined($page_link) && $page_link ne "") {
-    $namecode = "<a href=\"$page_link\">$esc_name</a>";
+      my $shortened_page_link = "";
+      my $shortened_name = "";
+      my $if_leaf_a_file;
+      my $sources = $dirSummary->{'sources'};
+      while (keys(%{$sources}) == 1) {
+          my @children_names = keys %{$sources};
+          my $only_child = $sources->{$children_names[0]};
+          my $path_last_part = (split('/', $only_child->{'name'}))[-1];
+          $shortened_page_link .= "/" if $shortened_page_link ne "";
+          $shortened_page_link .= $path_last_part;
+          $if_leaf_a_file = $only_child->{'type'} eq 'file';
+          $sources = $only_child->{'sources'};
+      }
+      if ($shortened_page_link ne "") {
+          $shortened_name = escape_html($shortened_page_link);
+          $shortened_page_link .= $if_leaf_a_file ? '.gcov.html' : '/index.html';
+      } else {
+          $shortened_name = $esc_name;
+          $shortened_page_link = $page_link;
+      }
+    $namecode = "<a href=\"$shortened_page_link\">$shortened_name</a>";
     $owner = "";
   } elsif ($is_secondary &&
            $primary_key ne 'name' &&
