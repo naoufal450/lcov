@@ -7866,7 +7866,7 @@ sub write_source_line(*$$$$)
 
     # Write out a line number navigation anchor every $nav_resolution
     # lines if necessary
-    $anchor_start   = "<a name=\"$line\">";
+    $anchor_start   = "<a name=\"$line\" onclick=\"change_url_hash(this)\">";
     $anchor_end     = "</a>";
 
     # *************************************************************
@@ -9793,6 +9793,12 @@ sub get_html_prolog($)
   <meta http-equiv="Content-Type" content="text/html; charset=$charset">
   <title>\@pagetitle\@</title>
   <link rel="stylesheet" type="text/css" href="\@basedir\@gcov.css">
+  <script>
+    function change_url_hash(el) {
+        if (!el) return;
+        window.history.replaceState(null, null, "#" + el.name);
+    }
+  </script>
 </head>
 
 <body>
